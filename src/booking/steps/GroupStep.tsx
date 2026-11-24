@@ -12,6 +12,9 @@ const BAND_TEXT = {
   adult: 'Adult (12 and over)',
 } as const;
 
+// D9: AGE_REFERENCE_DAY (10 Nov 2026) is the date every age is measured on.
+const AGE_NOTE = 'Age on 10 Nov 2026 (first festival day)';
+
 export function GroupStep({ state, dispatch, errors }: StepProps) {
   const { draft } = state;
   const attempted = state.attempted.group;
@@ -25,7 +28,7 @@ export function GroupStep({ state, dispatch, errors }: StepProps) {
   const ageField = (p: Person, path: string, onChange: (v: string) => void, label: string) => {
     const band = bandOf(p.age);
     return (
-      <Field label={label} required error={ageError(p.ageInput, path)} hint={band ? BAND_TEXT[band] : 'Whole number, e.g. 9'}>
+      <Field label={label} required error={ageError(p.ageInput, path)} hint={`${band ? BAND_TEXT[band] : 'Whole number, e.g. 9'}. ${AGE_NOTE}`}>
         {(c) => <input {...c} type="text" inputMode="numeric" autoComplete="off" value={p.ageInput} onChange={(e) => onChange(e.currentTarget.value)} />}
       </Field>
     );
@@ -55,7 +58,7 @@ export function GroupStep({ state, dispatch, errors }: StepProps) {
           <Field
             label="Your age"
             required
-            hint="You must be 18 or over to book."
+            hint={`You must be 18 or over to book. ${AGE_NOTE}`}
             error={ageError(draft.booker.ageInput, 'booker.age') ?? exactAt(errors, 'attendees.0.age')}
           >
             {(c) => (
