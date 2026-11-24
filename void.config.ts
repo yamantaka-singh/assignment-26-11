@@ -2,6 +2,8 @@
 import { defineConfig } from 'void/config';
 
 export default defineConfig({
+  // Stock must always be read fresh. Replicas can lag between requests (docs/guide/database/d1.md#read-replication).
+  database: { readReplication: false },
   "routing": {
     "typedRoutes": true
   },
