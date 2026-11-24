@@ -1,4 +1,4 @@
--- Seed data lives in a migration so a deploy gets stock and promos (db/seed.ts only runs locally).
+-- Seed data lives in a migration so a deploy gets stock and promos (there is no separate seed script).
 -- Literals mirror CATALOG.initialStock and PROMO_SEED; tests/seed-migration.test.ts fails if they drift.
 INSERT INTO `inventory` (`item_id`, `remaining`) VALUES
 	('day-adult', 380),
