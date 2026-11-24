@@ -1,8 +1,6 @@
 // Every edit to the booking draft. Returns the same object when an action is not a draft edit or
 // changes nothing, so the caller can tell by identity. All results go through normalizeDraft.
 import {
-  FAMILY_PASS_MAX_ADULTS,
-  FAMILY_PASS_MAX_CHILDREN,
   GARBA_DAYS,
   MAX_ATTENDEES,
   MAX_DANDIYA,
@@ -13,8 +11,8 @@ import {
   BOOKER_ID,
   NO_TICKET,
   bandOf,
-  countByBand,
   emptyPerson,
+  hasRoom,
   normalizeDraft,
   parseAge,
   sortDays,
@@ -59,15 +57,6 @@ function toggleAttending(draft: Draft, attending: boolean): Draft {
   if (others.length >= MAX_ATTENDEES) return draft;
   const me = withAgeInput({ ...emptyPerson(BOOKER_ID), name: booker.name }, booker.ageInput);
   return { ...draft, booker, people: [me, ...others] };
-}
-
-/** A family pass takes up to 2 adults and 2 children; the person may already be on it. */
-function hasRoom(draft: Draft, person: Person, passId: string): boolean {
-  const band = bandOf(person.age);
-  if (person.ticket.kind === 'family' && person.ticket.passId === passId) return false;
-  if (band === 'adult') return countByBand(draft, passId, 'adult') < FAMILY_PASS_MAX_ADULTS;
-  if (band === 'child') return countByBand(draft, passId, 'child') < FAMILY_PASS_MAX_CHILDREN;
-  return false;
 }
 
 function joinPass(draft: Draft, personId: string, passId: string): Draft {

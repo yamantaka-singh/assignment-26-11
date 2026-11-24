@@ -1,6 +1,8 @@
 // The booking draft the UI edits, and the pure helpers around it. No React, no fetch.
 // Nothing here prices anything: the payable total is always the server's Quote.
 import {
+  FAMILY_PASS_MAX_ADULTS,
+  FAMILY_PASS_MAX_CHILDREN,
   FESTIVAL_DAYS,
   MAX_AGE,
   MIN_AGE,
@@ -161,6 +163,15 @@ export const requestKey = (draft: Draft): string => JSON.stringify(buildRequest(
 export const countByBand = (draft: Draft, passId: string, band: AgeBand): number =>
   draft.people.filter((p) => p.ticket.kind === 'family' && p.ticket.passId === passId && bandOf(p.age) === band).length;
 
+/** A family pass takes up to 2 adults and 2 children. False if this person is already on it. */
+export function hasRoom(draft: Draft, person: Person, passId: string): boolean {
+  const band = bandOf(person.age);
+  if (person.ticket.kind === 'family' && person.ticket.passId === passId) return false;
+  if (band === 'adult') return countByBand(draft, passId, 'adult') < FAMILY_PASS_MAX_ADULTS;
+  if (band === 'child') return countByBand(draft, passId, 'child') < FAMILY_PASS_MAX_CHILDREN;
+  return false;
+}
+
 export const personLabel = (p: Person, index: number): string => (p.name.trim() === '' ? `Person ${index + 1}` : p.name.trim());
 
 export const sortDays = (days: readonly FestivalDay[]): FestivalDay[] => FESTIVAL_DAYS.filter((d) => days.includes(d));
@@ -217,6 +228,12 @@ export function messageAt(errors: readonly RuleError[], path: string): string | 
   const found = errors.filter((e) => e.path === path || e.path.startsWith(`${path}.`));
   return found.length === 0 ? undefined : uniqueMessages(found).join(' ');
 }
+
+/** Only an error for exactly this path (messageAt also matches everything beneath it). */
+export const exactAt = (errors: readonly RuleError[], path: string): string | undefined => {
+  const found = errors.filter((e) => e.path === path);
+  return found.length === 0 ? undefined : uniqueMessages(found).join(' ');
+};
 
 export type QuoteStatus = 'idle' | 'loading' | 'ready' | 'error' | 'offline';
 export type QuoteView = { readonly quote: Quote | null; readonly status: QuoteStatus };
