@@ -435,8 +435,8 @@ describe('found while testing', () => {
     expect(out.kind === 'ok' && out.quote.hints.join(' ')).not.toMatch(/\d{4}-\d{2}-\d{2}/);
   });
 
-  it.fails('rejects a phone number that has no digits', () => {
-    const b = booking({ booker: { name: 'Meera Shah', email: 'meera@example.com', phone: '-------', age: 38, attending: true } });
+  it.each(['-------', '(((((((', '+1 (21) 55-5'])('rejects phone %j: fewer than 7 digits', (phone) => {
+    const b = booking({ booker: { name: 'Meera Shah', email: 'meera@example.com', phone, age: 38, attending: true } });
     expect(codesOf(b)).not.toEqual([]);
   });
 });

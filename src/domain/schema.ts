@@ -31,7 +31,13 @@ const name = z.string({ error: MSG.name }).trim().min(1, MSG.name).max(MAX_NAME_
 const age = z.number({ error: MSG.age }).int(MSG.age).min(MIN_AGE, MSG.age).max(MAX_AGE, MSG.age);
 const id = z.string({ error: MSG.id }).regex(/^[A-Za-z0-9_-]{1,40}$/, MSG.id);
 const email = z.string({ error: MSG.email }).trim().max(254, MSG.email).pipe(z.email({ error: MSG.email }));
-const phone = z.string({ error: MSG.phone }).trim().regex(/^[0-9 +\-()]{7,20}$/, MSG.phone);
+const PHONE_CHARS = /^[0-9 +\-()]{7,20}$/;
+const MIN_PHONE_DIGITS = 7;
+// One check, so a bad phone yields one error: allowed characters only, and enough real digits.
+const phone = z
+  .string({ error: MSG.phone })
+  .trim()
+  .refine((v) => PHONE_CHARS.test(v) && (v.match(/\d/g) ?? []).length >= MIN_PHONE_DIGITS, MSG.phone);
 
 const festivalDay = z.enum(FESTIVAL_DAYS, { error: MSG.day });
 const garbaDay = z.enum(GARBA_DAYS, { error: MSG.garbaDay });
