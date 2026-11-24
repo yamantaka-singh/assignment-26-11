@@ -403,7 +403,7 @@ describe('flow states: no network', () => {
   });
 });
 
-// ---------------------------------------------------------------- found while testing (documented, not fixed here)
+// ---------------------------------------------------------------- found while testing (each was fixed; these pin the fixes)
 
 describe('found while testing', () => {
   it('does not recommend an All-Day Child Pass that is sold out right now', async () => {

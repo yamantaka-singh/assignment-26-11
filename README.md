@@ -34,7 +34,7 @@ None. A search of `src/`, `routes/`, `pages/`, `db/` and the config files finds 
 
 ```
 src/domain/     Pure business rules. No framework imports. Shared by server and UI.
-  catalog.ts      Item ids, prices (cents), festival days, limits
+  catalog.ts      Item ids, prices (cents), festival days (and their "Wed 11 Nov" labels), limits
   schema.ts       zod parse of untrusted JSON (strict: unknown keys rejected)
   eligibility.ts  Age, ticket, Family Pass, extras and group rules; returns all errors with field paths
   pricing.ts      Quote in integer cents, hints, stock units needed
@@ -44,6 +44,7 @@ src/server/     Services behind the routes. Storage only through the Repo interf
   quote.ts        validate -> promo -> price -> stock check (shared by /quote and /bookings)
   booking.ts      idempotency, payment, atomic commit, outcome mapping
   d1-repo.ts      The only file that touches D1: one db.batch per booking
+  stored.ts       Parses stored booking JSON through zod (a corrupt row is a logged 500, not a cast)
   stock.ts, payment.ts, hash.ts, reference.ts, confirmation.ts, catalog.ts, http.ts, repo.ts
 routes/api/     Thin Void handlers: catalog, quote, bookings, bookings/[id]
 db/             schema.ts (CHECK constraints) and migrations (schema + seed)
@@ -183,7 +184,7 @@ Also decided in the code, not in the D-list:
 
 ## Testing
 
-`npm test` runs 239 tests in 10 files at the time of writing (the count rises as edge-case tests land; run it for the current number). They pin down the places where being wrong costs money or admits the wrong person:
+`npm test` runs 308 tests in 13 files at the time of writing (run it for the current number). They pin down the places where being wrong costs money or admits the wrong person:
 
 - **Pricing** (`pricing.test.ts`): every ticket and extra, per-day multiplication, Family Pass hints, All-Day versus Day Pass hints, integer-cent guards, rounding (SEVA10 on $14.65 is $1.47 off), the FLAT20 floor, KIDSFREE with mixed groups, $0 totals.
 - **Promo** (`promo.test.ts`): none, applied, unknown, expired, exhausted, case and whitespace.
@@ -225,9 +226,7 @@ Stated plainly:
 - **No real Stripe.** Payment is simulated (ADR-0006). Card numbers pass through the server in the demo.
 - **No confirmation email.** The confirmation is on screen with a reference, and restorable from `#booking=<id>`.
 - **No sales-window cutoff** (D13). The festival dates have passed. A real deployment must add one.
-- **Age is typed, not verified** (ADR-0007), and the form hint does not yet say "age on 10 Nov".
-- **Some hints show ISO dates.** The Family Pass hints say "on 2026-11-10". The ticket text from `GET /api/bookings/:id` also uses ISO dates for Day Pass days. The reload-restore screen therefore reads differently from the first confirmation.
-- **The "All-Day Pass is sold out" hint reads the catalog's starting stock**, not live stock. It is correct today because All-Day Adult starts at 0. It would be stale if that item were restocked or another sold out.
+- **Age is typed, not verified** (ADR-0007). The form does say "Age on 10 Nov 2026 (first festival day)".
 - **Out-of-stock on `/api/quote` is a 422 with message "Some booking details need fixing"**, while `/api/bookings` returns 409 for the same condition. The client handles both. A 409 on quote would be cleaner.
 - **No rate limiting or bot protection** on any endpoint, including promo-code guessing. Cloudflare rate limiting would be the first addition.
 - **`GET /api/bookings/:id` is unauthenticated.** The id is a random UUID, but anyone holding it sees the booker's name and email.

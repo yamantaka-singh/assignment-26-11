@@ -40,5 +40,5 @@ Age drives price and eligibility (under 5 free, 5 to 11 child, 12 and over adult
 
 ### Negative
 - **The server cannot verify an age.** It trusts the typed number, and a parent who types 4 for a 5-year-old saves the fee. The door check is the control for that. This is a known gap.
-- **The form hint does not yet say "age on 10 Nov".** It shows only the band ("Child (5 to 11)"). The reference day is a rule in the code, not yet stated to the person.
+- **Age is only as honest as the person typing it.** The form now states the reference day ("Age on 10 Nov 2026 (first festival day)") next to every age field, but the age itself is not checked.
 - The rule is hard-coded to the 2026 dates. For another festival it is per-festival data (README, "Running ten festivals").
