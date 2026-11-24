@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vite-plus/test';
 import { percentDiscountCents, priceBooking } from '../src/domain/pricing';
 import { PROMO_SEED, evaluatePromo } from '../src/domain/promo';
-import type { FestivalDay, GarbaDay } from '../src/domain/catalog';
+import type { FestivalDay, GarbaDay, ItemId } from '../src/domain/catalog';
 import type { Attendee, BookingRequest, EntryTicket, PromoResult, Quote, ValidBooking } from '../src/domain/types';
 
 // Test-only: production code gets a ValidBooking from validateBooking(), never a cast.
@@ -43,7 +43,10 @@ const booking = (attendees: Attendee[], extra: Partial<BookingRequest> = {}): Va
     ...extra,
   });
 
-const price = (b: ValidBooking, p: PromoResult = NONE): Quote => priceBooking(b, p);
+// Live stock as seeded: only the All-Day Adult Pass is sold out.
+const SEEDED_SOLD_OUT: ReadonlySet<ItemId> = new Set<ItemId>(['allday-adult']);
+const price = (b: ValidBooking, p: PromoResult = NONE, soldOut: ReadonlySet<ItemId> = SEEDED_SOLD_OUT): Quote =>
+  priceBooking(b, p, soldOut);
 
 describe('entry ticket lines', () => {
   it('prices an adult day pass per person-day', () => {
@@ -249,6 +252,17 @@ describe('hints', () => {
   it('suggests the All-Day Child Pass over 5 child Day Passes', () => {
     const q = price(booking([att('kid', 8, { ticket: day(...ALL_DAYS) })]));
     expect(q.hints.some((h) => h.includes('All-Day Child Pass ($30) is cheaper than 5 Day Passes ($40)'))).toBe(true);
+  });
+
+  it('does not recommend an All-Day Child Pass that is sold out', () => {
+    const q = price(booking([att('kid', 8, { ticket: day(...ALL_DAYS) })]), NONE, new Set<ItemId>(['allday-child']));
+    expect(q.hints.join(' ')).not.toContain('is cheaper');
+  });
+
+  it('recommends the All-Day Adult Pass once it is no longer sold out', () => {
+    const q = price(booking([att('adult', 30, { ticket: day(...ALL_DAYS) })]), NONE, new Set<ItemId>());
+    expect(q.hints.join(' ')).toContain('an All-Day Adult Pass ($60) is cheaper than 5 Day Passes ($75)');
+    expect(q.hints.join(' ')).not.toContain('sold out');
   });
 
   it('does not nag when day passes are not more expensive', () => {

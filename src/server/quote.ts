@@ -4,7 +4,7 @@ import { priceBooking } from '../domain/pricing';
 import { validateBooking } from '../domain/eligibility';
 import type { Quote, RuleError, ValidBooking } from '../domain/types';
 import type { Repo } from './repo';
-import { stockErrors } from './stock';
+import { soldOutItems, stockErrors } from './stock';
 
 export type QuoteOutcome =
   | { readonly kind: 'ok'; readonly booking: ValidBooking; readonly quote: Quote }
@@ -22,8 +22,9 @@ export async function buildQuote(
 
   const code = normalizePromoCode(booking.promoCode);
   const record = code === undefined ? undefined : await repo.getPromo(code);
-  const quote = priceBooking(booking, evaluatePromo(code, now, record));
+  const inventory = await repo.getInventory();
+  const quote = priceBooking(booking, evaluatePromo(code, now, record), soldOutItems(inventory));
 
-  const errors = stockErrors(quote, await repo.getInventory());
+  const errors = stockErrors(quote, inventory);
   return errors.length > 0 ? { kind: 'out-of-stock', errors, quote } : { kind: 'ok', booking, quote };
 }

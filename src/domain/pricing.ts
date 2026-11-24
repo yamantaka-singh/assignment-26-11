@@ -51,7 +51,7 @@ function attendeeLines(a: Attendee): QuoteLine[] {
 }
 
 /** A person on Day Passes for 4-5 days may be better off (or only able) to buy an All-Day Pass. */
-function allDayHints(attendees: readonly Attendee[]): string[] {
+function allDayHints(attendees: readonly Attendee[], soldOut: ReadonlySet<ItemId>): string[] {
   return attendees.flatMap((a) => {
     const dayId = dayItem(a);
     const allId = allDayItem(a);
@@ -61,7 +61,7 @@ function allDayHints(attendees: readonly Attendee[]): string[] {
     if (dayTotal <= all.priceCents) return [];
     const n = a.ticket.days.length;
     const name = `All-Day ${isAdult(a) ? 'Adult' : 'Child'} Pass`;
-    return all.initialStock === 0
+    return soldOut.has(allId)
       ? [`${a.name}: the ${name} is sold out, so ${n} Day Passes (${dollars(dayTotal)}) are the way to go.`]
       : [`${a.name}: an ${name} (${dollars(all.priceCents)}) is cheaper than ${n} Day Passes (${dollars(dayTotal)}).`];
   });
@@ -112,7 +112,8 @@ function applyPromo(promo: PromoResult, subtotal: number, lines: readonly QuoteL
   return { promo, discount: kids };
 }
 
-export function priceBooking(booking: ValidBooking, promo: PromoResult): Quote {
+/** `soldOut` is the live set of items with no stock left; hints must never recommend one of them. */
+export function priceBooking(booking: ValidBooking, promo: PromoResult, soldOut: ReadonlySet<ItemId>): Quote {
   const lines: QuoteLine[] = [
     ...booking.attendees.flatMap(attendeeLines),
     ...booking.familyPasses.map((p) => line('family', 1, { day: p.day })),
@@ -132,7 +133,7 @@ export function priceBooking(booking: ValidBooking, promo: PromoResult): Quote {
     discountCents,
     totalCents: subtotalCents - discountCents,
     promo: applied.promo,
-    hints: [...allDayHints(booking.attendees), ...familyPassHints(booking), ...groupFamilyHints(booking.attendees)],
+    hints: [...allDayHints(booking.attendees, soldOut), ...familyPassHints(booking), ...groupFamilyHints(booking.attendees)],
     stockNeeded,
   };
 }

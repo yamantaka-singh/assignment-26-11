@@ -29,3 +29,7 @@ export function stockErrors(quote: Quote, inventory: Readonly<Record<string, num
     return [{ code: remaining <= 0 ? 'SOLD_OUT' : 'INSUFFICIENT_STOCK', path: `stock.${id}`, message: stockMessage(id, remaining) }];
   });
 }
+
+/** Items with nothing left right now. Pricing hints use this so they never recommend a sold-out pass. */
+export const soldOutItems = (inventory: Readonly<Record<string, number>>): ReadonlySet<ItemId> =>
+  new Set(ITEM_IDS.filter((id) => remainingOf(inventory, id) <= 0));

@@ -406,12 +406,21 @@ describe('flow states: no network', () => {
 // ---------------------------------------------------------------- found while testing (documented, not fixed here)
 
 describe('found while testing', () => {
-  it.fails('does not recommend an All-Day Child Pass that is sold out right now', async () => {
+  it('does not recommend an All-Day Child Pass that is sold out right now', async () => {
     const repo = memoryRepo();
     repo.inventory['allday-child'] = 0;
     const kid = person('c1', 'Anaya', 9, day(D10, D11, D13, '2026-11-12', '2026-11-14'));
     const out = await buildQuote(repo, booking({ attendees: [meera(), kid] }), NOW);
     expect(out.kind === 'ok' && out.quote.hints.join(' ')).not.toContain('All-Day Child Pass ($30) is cheaper');
+  });
+
+  it('stops saying All-Day Adult is sold out once it is restocked', async () => {
+    const repo = memoryRepo();
+    repo.inventory['allday-adult'] = 10;
+    const out = await buildQuote(repo, booking({ attendees: [person('a1', 'Meera Shah', 38, day(D10, D11, D13, '2026-11-12', '2026-11-14'))] }), NOW);
+    const hints = out.kind === 'ok' ? out.quote.hints.join(' ') : '';
+    expect(hints).toContain('All-Day Adult Pass ($60) is cheaper');
+    expect(hints).not.toContain('sold out');
   });
 
   it.fails('says the Family Pass hint with a readable date, not 2026-11-11', async () => {
