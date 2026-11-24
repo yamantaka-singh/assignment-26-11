@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1795506996136,
+      "tag": "20261124075636_lazy_stardust",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1795506999902,
+      "tag": "20261124075639_seed_stock_and_promos",
+      "breakpoints": true
+    }
+  ]
+}
