@@ -2,8 +2,11 @@ import { FAMILY_PASS_MAX_ADULTS, FAMILY_PASS_MAX_CHILDREN, FESTIVAL_DAYS, format
 import { Button } from '../../ui/components/Button';
 import { Card } from '../../ui/components/Card';
 import { Field } from '../../ui/components/Field';
+import { KrishnaMascot, type KrishnaPose } from '../../ui/components/KrishnaMascot';
 import { countByBand, messageAt, personLabel } from '../model';
 import type { StepProps } from './props';
+
+const FAMILY_PASS_POSES: readonly KrishnaPose[] = ['joyful', 'welcome', 'blessing', 'resting'];
 
 const plural = (n: number, one: string, many: string): string => `${n} ${n === 1 ? one : many}`;
 
@@ -17,7 +20,12 @@ export function PassPanel({ state, dispatch, errors }: StepProps) {
         const adults = countByBand(draft, pass.id, 'adult');
         const children = countByBand(draft, pass.id, 'child');
         return (
-          <Card key={pass.id} title={`Family Pass ${n + 1}`} headingLevel={3}>
+          <Card
+            key={pass.id}
+            title={`Family Pass ${n + 1}`}
+            headingLevel={3}
+            badge={<KrishnaMascot pose={FAMILY_PASS_POSES[n % FAMILY_PASS_POSES.length]} size="sm" />}
+          >
             <div className="stack">
               <Field label="Day for this pass" error={messageAt(errors, `familyPasses.${n}`)}>
                 {(c) => (

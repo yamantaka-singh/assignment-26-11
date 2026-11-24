@@ -110,6 +110,34 @@ export type AdvanceCheck =
 
 const UNVERIFIED = "We can't check your booking right now. Please check your connection and try again.";
 
+function groupValidationMessages(draft: Draft): string[] {
+  const msgs: string[] = [];
+  if (draft.booker.name.trim() === '') msgs.push('Your name: Please enter your name.');
+  const emailVal = draft.booker.email.trim();
+  if (emailVal === '' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+    msgs.push('Email: Please enter a valid email address.');
+  }
+  const phoneVal = draft.booker.phone.trim();
+  if (
+    phoneVal === '' ||
+    !/^[0-9 +\-()]{7,20}$/.test(phoneVal) ||
+    (phoneVal.match(/\d/g) ?? []).length < 7
+  ) {
+    msgs.push('Phone: Enter a valid phone number.');
+  }
+  const ownAge = ageProblem(draft.booker.ageInput);
+  if (ownAge !== null) msgs.push(`Your age: ${ownAge}`);
+  for (let i = 0; i < draft.people.length; i++) {
+    const p = draft.people[i];
+    if (p.id !== BOOKER_ID) {
+      if (p.name.trim() === '') msgs.push(`${personLabel(p, i)}'s name: Please enter a name.`);
+      const pAge = ageProblem(p.ageInput);
+      if (pAge !== null) msgs.push(`${personLabel(p, i)}'s age: ${pAge}`);
+    }
+  }
+  return msgs;
+}
+
 function ageMessages(draft: Draft): string[] {
   const own = ageProblem(draft.booker.ageInput);
   const booker = own === null ? [] : [`Your age: ${own}`];
@@ -123,6 +151,10 @@ function ageMessages(draft: Draft): string[] {
 /** Can the person leave the current step? Answers from the last server quote, never from the browser's own rules. */
 export function advanceCheck(state: BookingState): AdvanceCheck {
   if (!isFormStep(state.step)) return { kind: 'ok' };
+  if (state.step === 'group') {
+    const groupMsgs = groupValidationMessages(state.draft);
+    if (groupMsgs.length > 0) return { kind: 'blocked', messages: groupMsgs };
+  }
   if (buildRequest(state.draft) === null) return { kind: 'blocked', messages: ageMessages(state.draft) };
   if (state.quoteStatus === 'loading' || state.quoteStatus === 'idle') return { kind: 'wait' };
   if (state.quoteStatus !== 'ready') return { kind: 'blocked', messages: [UNVERIFIED] };

@@ -13,7 +13,7 @@ const MSG = {
   name: `Please enter a name between 1 and ${MAX_NAME_LENGTH} characters.`,
   age: `Age must be a whole number between ${MIN_AGE} and ${MAX_AGE}.`,
   email: 'Please enter a valid email address.',
-  phone: 'Please enter a phone number using 7 to 20 digits, spaces, + - or brackets.',
+  phone: 'Enter a valid phone number.',
   id: 'Ids can use letters, numbers, - and _ (1 to 40 characters).',
   day: 'Please pick a festival day between Nov 10 and Nov 14.',
   garbaDay: 'Garba workshops run on Nov 11 and Nov 13 only.',

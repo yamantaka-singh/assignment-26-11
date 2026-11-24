@@ -16,6 +16,9 @@ import { ReviewStep } from './booking/steps/ReviewStep';
 import { TicketsStep } from './booking/steps/TicketsStep';
 import type { StepId } from './booking/model';
 import { Button } from './ui/components/Button';
+import { FestivalParticles } from './ui/components/FestivalParticles';
+import { KrishnaMascot } from './ui/components/KrishnaMascot';
+import { MandalaWatermark } from './ui/components/MandalaWatermark';
 import { formatCents } from './ui/components/MoneyText';
 import { Notice } from './ui/components/Notice';
 import { Stepper } from './ui/components/Stepper';
@@ -89,18 +92,27 @@ export function App() {
   };
 
   return (
-    <main className="page stack">
-      <header>
-        <h1 className="app-title">Sharad Utsav 2026</h1>
-        <p className="muted">Radha Krishna Temple, Allen, Texas · Tue 10 to Sat 14 Nov</p>
-      </header>
+    <>
+      <FestivalParticles />
+      <MandalaWatermark position="top-right" />
+      <MandalaWatermark position="bottom-left" />
+      <main className="page stack">
+        <header className="app-header">
+          <div className="krishna-avatar-badge" aria-hidden="true">
+            <KrishnaMascot pose="flute" size="badge" floating />
+          </div>
+          <div>
+            <h1 className="app-title">Sharad Utsav 2026</h1>
+            <p className="muted app-subtitle">Radha Krishna Temple, Allen, Texas · Tue 10 to Sat 14 Nov</p>
+          </div>
+        </header>
       <Stepper steps={STEPS} currentId={shown} />
       <h2 ref={headingRef} tabIndex={-1} className="step-heading">
         {TITLES[state.step]}
       </h2>
 
       <div ref={bodyRef} className="stack">
-        {messages.length > 0 ? (
+        {state.step !== 'group' && messages.length > 0 ? (
           <div className="step-errors" tabIndex={-1}>
             <Notice tone="error" title={messages.length === 1 ? 'One thing to fix before you continue' : `${messages.length} things to fix before you continue`}>
               <ul className="list-plain">
@@ -140,5 +152,6 @@ export function App() {
         </SummaryBar>
       )}
     </main>
-  );
+  </>
+);
 }

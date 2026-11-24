@@ -1,5 +1,6 @@
 import { Button } from '../../ui/components/Button';
 import { Card } from '../../ui/components/Card';
+import { KrishnaMascot } from '../../ui/components/KrishnaMascot';
 import { MoneyText } from '../../ui/components/MoneyText';
 import { Notice } from '../../ui/components/Notice';
 import type { ConfirmationView } from '../machine';
@@ -16,7 +17,7 @@ export function Confirmation({ confirmation, onStartOver }: Props) {
       <Notice tone="success" title={amountCents === 0 ? "Booking confirmed" : "Payment received"}>
         {amountCents === 0 ? 'No payment was needed.' : <>We received <MoneyText cents={amountCents} />.</>} Keep your reference: the volunteers will look you up by it at the door.
       </Notice>
-      <Card title="Your reference" headingLevel={3} tone="cream">
+      <Card title="Your reference" headingLevel={3} tone="cream" badge={<KrishnaMascot pose="joyful" size="md" floating />}>
         <p className="reference" aria-label={`Booking reference ${reference}`}>
           {reference}
         </p>

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "source": {},
+  "resolved": {
+    "account_id": "bb8035390cb1b4222ca2e1e72fa4b04d",
+    "d1_databases": [
+      {
+        "binding": "DB",
+        "database_name": "sharad-utsav-booking-db",
+        "database_id": "239e47b1-0068-47d5-a43c-19636dfd304d",
+        "migrations_dir": "./db/migrations"
+      }
+    ],
+    "name": "sharad-utsav-booking"
+  },
+  "text": "{\n  \"account_id\": \"bb8035390cb1b4222ca2e1e72fa4b04d\",\n  \"d1_databases\": [\n    {\n      \"binding\": \"DB\",\n      \"database_name\": \"sharad-utsav-booking-db\",\n      \"database_id\": \"239e47b1-0068-47d5-a43c-19636dfd304d\",\n      \"migrations_dir\": \"./db/migrations\"\n    }\n  ],\n  \"name\": \"sharad-utsav-booking\"\n}\n"
+}

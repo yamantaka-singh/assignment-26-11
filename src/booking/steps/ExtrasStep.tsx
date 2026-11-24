@@ -1,11 +1,22 @@
 import { formatFestivalDay, GARBA_DAYS, MAX_DANDIYA } from '../../domain/catalog';
 import { Card } from '../../ui/components/Card';
 import { CheckboxGroup } from '../../ui/components/CheckboxGroup';
+import { KrishnaMascot, type KrishnaPose } from '../../ui/components/KrishnaMascot';
 import { formatCents } from '../../ui/components/MoneyText';
 import { Notice } from '../../ui/components/Notice';
 import { QuantityInput } from '../../ui/components/QuantityInput';
 import { bandOf, entryDaysOf, messageAt, personLabel } from '../model';
 import { itemOf, type StepProps } from './props';
+
+const EXTRAS_PERSON_POSES: readonly KrishnaPose[] = [
+  'eating_butter',
+  'butter_pot',
+  'resting',
+  'blessing',
+  'welcome',
+  'crawling',
+  'joyful',
+];
 
 function garbaNote(left: number | undefined): string {
   if (left === undefined || left > 10) return '';
@@ -41,7 +52,12 @@ export function ExtrasStep({ state, dispatch, errors }: StepProps) {
         const canGarba = band === 'child' || band === 'adult';
         const garbaDays = GARBA_DAYS.filter((d) => entry.includes(d));
         return (
-          <Card key={p.id} title={personLabel(p, i)} headingLevel={3}>
+          <Card
+            key={p.id}
+            title={personLabel(p, i)}
+            headingLevel={3}
+            badge={<KrishnaMascot pose={EXTRAS_PERSON_POSES[i % EXTRAS_PERSON_POSES.length]} size="sm" />}
+          >
             {entry.length === 0 ? (
               <p className="muted">Choose a ticket for this person first, then you can add dinner and workshops for the days they&apos;re coming.</p>
             ) : (
@@ -73,7 +89,7 @@ export function ExtrasStep({ state, dispatch, errors }: StepProps) {
           </Card>
         );
       })}
-      <Card title="Dandiya sticks" headingLevel={3}>
+      <Card title="Dandiya sticks" headingLevel={3} badge={<KrishnaMascot pose="dancing" size="sm" />}>
         <QuantityInput
           label="Pairs of Dandiya sticks"
           hint={`${dandiya ? `${formatCents(dandiya.priceCents)} a pair. ` : ''}A souvenir for the whole booking, up to ${MAX_DANDIYA}.`}

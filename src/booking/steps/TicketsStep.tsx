@@ -1,9 +1,20 @@
 import { Card } from '../../ui/components/Card';
+import { KrishnaMascot, type KrishnaPose } from '../../ui/components/KrishnaMascot';
 import { Notice } from '../../ui/components/Notice';
 import { bandOf, personLabel } from '../model';
 import { PassPanel } from './PassPanel';
 import type { StepProps } from './props';
 import { TicketChoice } from './TicketChoice';
+
+const TICKET_POSES: readonly KrishnaPose[] = [
+  'dancing',
+  'eating_butter',
+  'blessing',
+  'resting',
+  'joyful',
+  'butter_pot',
+  'welcome',
+];
 
 export function TicketsStep(props: StepProps) {
   const { state } = props;
@@ -20,8 +31,9 @@ export function TicketsStep(props: StepProps) {
       ) : null}
       {state.draft.people.map((p, i) => {
         const band = bandOf(p.age);
+        const mascotPose = band === 'toddler' ? 'crawling' : TICKET_POSES[i % TICKET_POSES.length];
         return (
-          <Card key={p.id} title={personLabel(p, i)} headingLevel={3}>
+          <Card key={p.id} title={personLabel(p, i)} headingLevel={3} badge={<KrishnaMascot pose={mascotPose} size="sm" />}>
             {band === 'toddler' ? (
               <p>Under 5 — free, no ticket needed. We just count them at the door.</p>
             ) : (

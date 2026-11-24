@@ -1,5 +1,6 @@
 import { formatFestivalDay } from '../../domain/catalog';
 import { Card } from '../../ui/components/Card';
+import { KrishnaMascot } from '../../ui/components/KrishnaMascot';
 import { MoneyText } from '../../ui/components/MoneyText';
 import { Button } from '../../ui/components/Button';
 import { Notice } from '../../ui/components/Notice';
@@ -30,7 +31,7 @@ export function ReviewStep({ state, dispatch, onPay }: Props) {
         </Notice>
       ) : null}
 
-      <Card title="Who is coming" headingLevel={3}>
+      <Card title="Who is coming" headingLevel={3} badge={<KrishnaMascot pose="blessing" size="sm" />}>
         <ul className="list-plain">
           {draft.people.map((p, i) => (
             <li key={p.id} className="line">
@@ -41,7 +42,7 @@ export function ReviewStep({ state, dispatch, onPay }: Props) {
         </ul>
       </Card>
 
-      <Card title="Your booking" headingLevel={3}>
+      <Card title="Your booking" headingLevel={3} badge={<KrishnaMascot pose="butter_pot" size="sm" />}>
         {quote === null ? (
           <p aria-busy={quoteStatus === 'loading'} className="muted">
             {quoteStatus === 'loading' ? 'Working out your total…' : 'Your total will appear here.'}
