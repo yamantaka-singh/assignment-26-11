@@ -12,7 +12,7 @@ export type JsonBody = { readonly ok: true; readonly value: unknown } | { readon
 /** Read and parse a JSON body, with a size cap. Failure is an HTTP response ready to return. */
 export async function readJson(request: Request): Promise<JsonBody> {
   const text = await request.text();
-  if (text.length > MAX_BODY_BYTES) {
+  if (new TextEncoder().encode(text).byteLength > MAX_BODY_BYTES) {
     return { ok: false, response: errorResponse(413, { code: 'PAYLOAD_TOO_LARGE', message: 'That request is too large.' }) };
   }
   try {

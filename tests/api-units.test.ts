@@ -71,4 +71,13 @@ describe('http helpers', () => {
     expect(out.ok).toBe(false);
     if (!out.ok) expect(out.response.status).toBe(413);
   });
+  it('measures the size cap in bytes, not characters', async () => {
+    // 60,000 characters but 120,000 bytes in UTF-8.
+    const tooBig = await readJson(new Request('http://x/', { method: 'POST', body: JSON.stringify({ pad: 'é'.repeat(60_000) }) }));
+    expect(tooBig.ok).toBe(false);
+    if (!tooBig.ok) expect(tooBig.response.status).toBe(413);
+    // 49,000 characters is 98,000 bytes: under the cap, so it parses.
+    const fits = await readJson(new Request('http://x/', { method: 'POST', body: JSON.stringify({ pad: 'é'.repeat(49_000) }) }));
+    expect(fits.ok).toBe(true);
+  });
 });
