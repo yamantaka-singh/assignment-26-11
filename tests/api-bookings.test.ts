@@ -242,7 +242,7 @@ describe('confirmation view', () => {
     if (!record) throw new Error('missing booking');
     const view = toConfirmation(record);
     expect(view.booker).toEqual({ name: 'Meera Shah', email: 'meera@example.com' });
-    expect(view.attendees).toEqual([{ name: 'Meera Shah', ticket: 'Day Pass: 2026-11-10' }]);
+    expect(view.attendees).toEqual([{ name: 'Meera Shah', ticket: 'Day Pass: Tue 10 Nov' }]);
     expect(JSON.stringify(view)).not.toContain('214-555');
   });
 });

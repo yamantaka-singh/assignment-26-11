@@ -1,8 +1,9 @@
+import { formatFestivalDay } from '../../domain/catalog';
 import { Card } from '../../ui/components/Card';
 import { MoneyText } from '../../ui/components/MoneyText';
 import { Button } from '../../ui/components/Button';
 import { Notice } from '../../ui/components/Notice';
-import { describeTicket, formatDay, personLabel } from '../model';
+import { describeTicket, personLabel } from '../model';
 import { PaymentPanel } from './PaymentPanel';
 import { PromoForm } from './PromoForm';
 import type { StepProps } from './props';
@@ -52,7 +53,7 @@ export function ReviewStep({ state, dispatch, onPay }: Props) {
                 <li key={`${l.itemId}-${l.attendeeId ?? ''}-${l.day ?? ''}`} className="line">
                   <span>
                     {l.label}
-                    {l.day ? ` (${formatDay(l.day)})` : ''}
+                    {l.day ? ` (${formatFestivalDay(l.day)})` : ''}
                     {l.qty > 1 ? ` × ${l.qty}` : ''}
                   </span>
                   <MoneyText cents={l.totalCents} />

@@ -16,6 +16,18 @@ export const FESTIVAL_DAYS = [
 ] as const;
 export type FestivalDay = (typeof FESTIVAL_DAYS)[number];
 
+// A lookup table, not Intl: identical output on every runtime (Worker, Node, browser).
+const DAY_LABELS: Readonly<Record<FestivalDay, string>> = {
+  '2026-11-10': 'Tue 10 Nov',
+  '2026-11-11': 'Wed 11 Nov',
+  '2026-11-12': 'Thu 12 Nov',
+  '2026-11-13': 'Fri 13 Nov',
+  '2026-11-14': 'Sat 14 Nov',
+};
+
+/** The one way a festival day is shown to people: "Wed 11 Nov". */
+export const formatFestivalDay = (day: FestivalDay): string => DAY_LABELS[day];
+
 export const GARBA_DAYS = ['2026-11-11', '2026-11-13'] as const satisfies readonly FestivalDay[];
 export type GarbaDay = (typeof GARBA_DAYS)[number];
 

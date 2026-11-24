@@ -265,6 +265,25 @@ describe('hints', () => {
     expect(q.hints.join(' ')).not.toContain('sold out');
   });
 
+  it('names days in words in the Family Pass hints, never as ISO dates', () => {
+    const family = price(
+      booking(
+        [att('a', 35, { ticket: { kind: 'family', passId: 'p1' } }), att('k', 8, { ticket: { kind: 'family', passId: 'p1' } })],
+        { familyPasses: [{ id: 'p1', day: D11 }] },
+      ),
+    );
+    expect(family.hints.join(' ')).toContain('on Wed 11 Nov,');
+    const group = price(
+      booking([
+        att('a1', 35, { ticket: day(D10) }),
+        att('a2', 34, { ticket: day(D10) }),
+        att('k1', 8, { ticket: day(D10) }),
+        att('k2', 6, { ticket: day(D10) }),
+      ]),
+    );
+    expect(group.hints.join(' ')).toContain('On Tue 10 Nov,');
+  });
+
   it('does not nag when day passes are not more expensive', () => {
     const q = price(booking([att('kid', 8, { ticket: day(D10, D11) })]));
     expect(q.hints).toEqual([]);

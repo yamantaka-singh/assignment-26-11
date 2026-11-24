@@ -1,10 +1,10 @@
 import type { Dispatch } from 'react';
-import { FESTIVAL_DAYS, type ItemId } from '../../domain/catalog';
+import { FESTIVAL_DAYS, formatFestivalDay, type ItemId } from '../../domain/catalog';
 import { CheckboxGroup } from '../../ui/components/CheckboxGroup';
 import { Field } from '../../ui/components/Field';
 import { formatCents } from '../../ui/components/MoneyText';
 import type { BookingAction, BookingState } from '../machine';
-import { bandOf, exactAt, formatDay, hasRoom, type Person } from '../model';
+import { bandOf, exactAt, hasRoom, type Person } from '../model';
 import { itemOf, stockNote } from './props';
 import type { RuleError } from '../../domain/types';
 
@@ -81,7 +81,7 @@ export function TicketChoice({ state, dispatch, person, index, errors }: Props) 
       {person.ticket.kind === 'day' ? (
         <CheckboxGroup
           legend="Which days?"
-          options={FESTIVAL_DAYS.map((d) => ({ value: d, label: formatDay(d) }))}
+          options={FESTIVAL_DAYS.map((d) => ({ value: d, label: formatFestivalDay(d) }))}
           selected={person.ticket.days}
           error={daysError}
           onChange={(days) => dispatch({ type: 'dayPassDaysChosen', personId: person.id, days })}
@@ -101,7 +101,7 @@ function PassPicker({ state, dispatch, person, passId }: Pick<Props, 'state' | '
         <select {...c} value={passId} onChange={(e) => dispatch({ type: 'passJoined', personId: person.id, passId: e.currentTarget.value })}>
           {draft.passes.map((p, n) => (
             <option key={p.id} value={p.id} disabled={p.id !== passId && !hasRoom(draft, person, p.id)}>
-              Pass {n + 1} — {formatDay(p.day)}
+              Pass {n + 1} — {formatFestivalDay(p.day)}
               {p.id !== passId && !hasRoom(draft, person, p.id) ? ' (full)' : ''}
             </option>
           ))}

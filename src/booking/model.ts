@@ -4,6 +4,7 @@ import {
   FAMILY_PASS_MAX_ADULTS,
   FAMILY_PASS_MAX_CHILDREN,
   FESTIVAL_DAYS,
+  formatFestivalDay,
   MAX_AGE,
   MIN_AGE,
   type FestivalDay,
@@ -176,20 +177,17 @@ export const personLabel = (p: Person, index: number): string => (p.name.trim() 
 
 export const sortDays = (days: readonly FestivalDay[]): FestivalDay[] => FESTIVAL_DAYS.filter((d) => days.includes(d));
 
-export const formatDay = (day: FestivalDay): string =>
-  new Date(`${day}T00:00:00Z`).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
-
 /** Plain-words ticket for lists and the confirmation. Display only: no rule depends on this text. */
 export function describeTicket(p: Person, passes: readonly FamilyPass[]): string {
   switch (p.ticket.kind) {
     case 'day':
-      return `Day Pass: ${sortDays(p.ticket.days).map(formatDay).join(', ')}`;
+      return `Day Pass: ${sortDays(p.ticket.days).map(formatFestivalDay).join(', ')}`;
     case 'allDay':
       return 'All-Day Pass (all 5 days)';
     case 'family': {
       const passId = p.ticket.passId;
       const pass = passes.find((x) => x.id === passId);
-      return pass ? `Family Pass: ${formatDay(pass.day)}` : 'Family Pass';
+      return pass ? `Family Pass: ${formatFestivalDay(pass.day)}` : 'Family Pass';
     }
     case 'none':
       return bandOf(p.age) === 'toddler' ? 'Free entry (under 5)' : 'No ticket chosen yet';

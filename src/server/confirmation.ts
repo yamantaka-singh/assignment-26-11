@@ -1,11 +1,12 @@
 // What GET /api/bookings/:id shows. Deliberately small: booker name + email only, no phone, no card data.
+import { formatFestivalDay } from '../domain/catalog';
 import type { Attendee, Quote } from '../domain/types';
 import type { BookingRecord } from './repo';
 
 const ticketSummary = (a: Attendee): string => {
   switch (a.ticket.kind) {
     case 'day':
-      return `Day Pass: ${a.ticket.days.join(', ')}`;
+      return `Day Pass: ${a.ticket.days.map(formatFestivalDay).join(', ')}`;
     case 'allDay':
       return 'All-Day Pass';
     case 'family':

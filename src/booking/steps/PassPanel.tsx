@@ -1,8 +1,8 @@
-import { FAMILY_PASS_MAX_ADULTS, FAMILY_PASS_MAX_CHILDREN, FESTIVAL_DAYS, type FestivalDay } from '../../domain/catalog';
+import { FAMILY_PASS_MAX_ADULTS, FAMILY_PASS_MAX_CHILDREN, FESTIVAL_DAYS, formatFestivalDay, type FestivalDay } from '../../domain/catalog';
 import { Button } from '../../ui/components/Button';
 import { Card } from '../../ui/components/Card';
 import { Field } from '../../ui/components/Field';
-import { countByBand, formatDay, messageAt, personLabel } from '../model';
+import { countByBand, messageAt, personLabel } from '../model';
 import type { StepProps } from './props';
 
 const plural = (n: number, one: string, many: string): string => `${n} ${n === 1 ? one : many}`;
@@ -31,7 +31,7 @@ export function PassPanel({ state, dispatch, errors }: StepProps) {
                   >
                     {FESTIVAL_DAYS.map((d) => (
                       <option key={d} value={d}>
-                        {formatDay(d)}
+                        {formatFestivalDay(d)}
                       </option>
                     ))}
                   </select>

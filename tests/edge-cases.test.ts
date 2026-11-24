@@ -423,7 +423,7 @@ describe('found while testing', () => {
     expect(hints).not.toContain('sold out');
   });
 
-  it.fails('says the Family Pass hint with a readable date, not 2026-11-11', async () => {
+  it('says the Family Pass hint with a readable date, not 2026-11-11', async () => {
     const out = await buildQuote(
       memoryRepo(),
       booking({

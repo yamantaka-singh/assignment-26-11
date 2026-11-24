@@ -6,6 +6,7 @@ import {
   FAMILY_PASS_MAX_ADULTS,
   FAMILY_PASS_MAX_CHILDREN,
   FESTIVAL_DAYS,
+  formatFestivalDay,
   type ItemId,
 } from './catalog';
 import type { Attendee, PromoResult, Quote, QuoteLine, ValidBooking } from './types';
@@ -76,7 +77,7 @@ function familyPassHints(booking: ValidBooking): string[] {
       return sum + (id === undefined ? 0 : CATALOG[id].priceCents);
     }, 0);
     return individual < pass
-      ? [`Individual Day Passes would cost ${dollars(individual)} for these ${members.length} people on ${p.day}, less than the ${dollars(pass)} Family Pass.`]
+      ? [`Individual Day Passes would cost ${dollars(individual)} for these ${members.length} people on ${formatFestivalDay(p.day)}, less than the ${dollars(pass)} Family Pass.`]
       : [];
   });
 }
@@ -87,7 +88,7 @@ function groupFamilyHints(attendees: readonly Attendee[]): string[] {
     const adults = singles.filter(isAdult).length;
     const children = singles.filter(isChild).length;
     return adults >= FAMILY_PASS_MAX_ADULTS && children >= FAMILY_PASS_MAX_CHILDREN
-      ? [`On ${d}, a Family Pass (${dollars(CATALOG.family.priceCents)}) covers 2 adults and 2 children and costs less than individual Day Passes.`]
+      ? [`On ${formatFestivalDay(d)}, a Family Pass (${dollars(CATALOG.family.priceCents)}) covers 2 adults and 2 children and costs less than individual Day Passes.`]
       : [];
   });
 }

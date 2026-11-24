@@ -1,10 +1,10 @@
-import { GARBA_DAYS, MAX_DANDIYA } from '../../domain/catalog';
+import { formatFestivalDay, GARBA_DAYS, MAX_DANDIYA } from '../../domain/catalog';
 import { Card } from '../../ui/components/Card';
 import { CheckboxGroup } from '../../ui/components/CheckboxGroup';
 import { formatCents } from '../../ui/components/MoneyText';
 import { Notice } from '../../ui/components/Notice';
 import { QuantityInput } from '../../ui/components/QuantityInput';
-import { bandOf, entryDaysOf, formatDay, messageAt, personLabel } from '../model';
+import { bandOf, entryDaysOf, messageAt, personLabel } from '../model';
 import { itemOf, type StepProps } from './props';
 
 function garbaNote(left: number | undefined): string {
@@ -49,7 +49,7 @@ export function ExtrasStep({ state, dispatch, errors }: StepProps) {
                 <CheckboxGroup
                   legend={`Dinner plates for ${personLabel(p, i)}`}
                   hint={`${dinner ? `${formatCents(dinner.priceCents)} per plate. ` : ''}Only on the days they have entry.`}
-                  options={entry.map((d) => ({ value: d, label: formatDay(d) }))}
+                  options={entry.map((d) => ({ value: d, label: formatFestivalDay(d) }))}
                   selected={p.dinnerDays}
                   error={messageAt(errors, `attendees.${i}.dinnerDays`)}
                   onChange={(days) => dispatch({ type: 'dinnerDaysChosen', personId: p.id, days })}
@@ -60,7 +60,7 @@ export function ExtrasStep({ state, dispatch, errors }: StepProps) {
                     hint={garba ? `${formatCents(garba.priceCents)} each. Ages 5 and over. ${garbaNote(garbaLeft)}` : undefined}
                     options={garbaDays.map((d) => {
                       const reason = garbaReason(p.garbaDays.includes(d));
-                      return { value: d, label: formatDay(d), disabled: reason !== undefined, reason };
+                      return { value: d, label: formatFestivalDay(d), disabled: reason !== undefined, reason };
                     })}
                     selected={p.garbaDays}
                     error={messageAt(errors, `attendees.${i}.garbaDays`)}
