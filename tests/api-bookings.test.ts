@@ -4,7 +4,7 @@ import { buildQuote } from '../src/server/quote';
 import { catalogView } from '../src/server/catalog';
 import { toConfirmation } from '../src/server/confirmation';
 import type { Repo } from '../src/server/repo';
-import { APPROVED, booking, D10, D11, DECLINED, garbaGroup, NOW, person } from './helpers/fixtures';
+import { APPROVED, booking, D10, DECLINED, garbaGroup, NOW, person } from './helpers/fixtures';
 import { memoryRepo } from './helpers/memory-repo';
 
 const KEY = 'key-0001-abcdef';
