@@ -59,7 +59,7 @@ const ticket = z.discriminatedUnion(
   { error: MSG.ticket },
 );
 
-const attendee = z.strictObject({
+export const attendeeSchema = z.strictObject({
   id,
   name,
   age,
@@ -68,7 +68,7 @@ const attendee = z.strictObject({
   garbaDays: uniqueList(garbaDay),
 });
 
-const booker = z.strictObject({
+export const bookerSchema = z.strictObject({
   name,
   email,
   phone,
@@ -78,8 +78,8 @@ const booker = z.strictObject({
 
 export const bookingRequestSchema = z.strictObject(
   {
-    booker,
-    attendees: z.array(attendee, { error: MSG.attendees }).min(1, MSG.attendees).max(MAX_ATTENDEES, MSG.attendees),
+    booker: bookerSchema,
+    attendees: z.array(attendeeSchema, { error: MSG.attendees }).min(1, MSG.attendees).max(MAX_ATTENDEES, MSG.attendees),
     familyPasses: z
       .array(z.strictObject({ id, day: festivalDay }), { error: MSG.passes })
       .max(MAX_FAMILY_PASSES, MSG.passes),

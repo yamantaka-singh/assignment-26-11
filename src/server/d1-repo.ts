@@ -2,8 +2,9 @@
 import { bookings, inventory, promoCodes } from '@schema';
 import { db, eq, sql, type BatchItem } from 'void/db';
 import { ITEM_IDS, PROMO_CODES, type ItemId, type PromoCode } from '../domain/catalog';
-import type { Attendee, Booker, PromoRecord, Quote } from '../domain/types';
+import type { PromoRecord } from '../domain/types';
 import type { BookingRecord, CommitResult, NewBooking, Repo } from './repo';
+import { parseStoredBooking } from './stored';
 
 // Constraint names from db/schema.ts. A failed CHECK rolls back the whole batch.
 const STOCK_CHECK = 'inventory_remaining_non_negative';
@@ -26,18 +27,12 @@ function toPromoRecord(row: typeof promoCodes.$inferSelect): PromoRecord | undef
 }
 
 function toBookingRecord(row: typeof bookings.$inferSelect): BookingRecord {
-  // These columns were written by commitBooking from typed values, so the JSON is ours.
-  const booker: Booker = JSON.parse(row.bookerJson);
-  const attendees: readonly Attendee[] = JSON.parse(row.attendeesJson);
-  const quote: Quote = JSON.parse(row.quoteJson);
   return {
     id: row.id,
     reference: row.reference,
     idempotencyKey: row.idempotencyKey,
     requestHash: row.requestHash,
-    booker,
-    attendees,
-    quote,
+    ...parseStoredBooking(row),
     amountCents: row.amountCents,
     status: 'confirmed',
     createdAt: row.createdAt,
