@@ -6,9 +6,9 @@
 
 **Architecture:** A Void "SPA + API" app on Cloudflare Workers. `src/domain/` holds the pure business rules (catalog, ages, pricing, promos) with no framework imports, and both the server and the UI import it. `routes/api/*` are thin Void handlers: they validate with zod, call the domain, and persist to D1. Stock and promo-usage limits are enforced by SQLite `CHECK` constraints inside one atomic `db.batch`, so two people racing for the last workshop seat cannot both succeed. The React UI is a single `useReducer` state machine that never computes the payable total: it shows the server's `/api/quote` result.
 
-**Tech stack:** Void 1.11 (Vite+, Hono under the hood), React, D1 (SQLite) + Drizzle, zod, Vitest via `vp test`, plain CSS with brand tokens. Vercel mirror = `vercel.json` rewrite to the Workers URL.
+**Tech stack:** Void 1.11 (Vite+, Hono under the hood), React, D1 (SQLite) + Drizzle, zod, Vitest via `vp test`, plain CSS with brand tokens. Deployed on Void (Cloudflare) only.
 
-**Decision log (user, 2026-11-24):** build on Void and add a thin Vercel mirror so there is a Vercel URL to submit (ADR-0001). Work stays local: the user pushes to GitHub and runs the deploy.
+**Decision log (user, 2026-11-24):** build on Void and add a thin Vercel mirror (ADR-0001). **Revised same day:** Void only, no Vercel mirror; README records the change from DESIGN.md. Work stays local: the user pushes to GitHub and runs the deploy.
 
 ---
 
@@ -27,7 +27,7 @@ T0 scaffold + domain types + DESIGN.md  (sequential, orchestrator)
         │
         ├── T6 ADRs + README + API contract   ─┐  parallel wave 2
         ├── T7 TEST-CASES.md + edge-case tests  ├─ (disjoint files)
-        └── T8 Vercel mirror + deploy runbook  ─┘
+        └── T8 Void deploy runbook           ─┘
         │
         T9 verification-loop (orchestrator)
 ```
@@ -128,9 +128,9 @@ README: live URLs at the top (placeholders until deploy), run locally, env vars,
 
 A table of situation → expected → where it is enforced → test name.
 
-### Task 8: Vercel mirror + deploy runbook — skill `vercel-deployment`
+### Task 8: Void deploy runbook — skill `void` (bundled)
 
-**Files:** `vercel/vercel.json`, `vercel/README.md`, `docs/DEPLOY.md`
+**Files:** `docs/DEPLOY.md`. Covers `void deploy`, migrations-in-prod (seed migration), env vars, rollback, and how to check that stock persists across requests and over time (brief §7 rule 6). No Vercel.
 
 ### Task 9: Verification — skill `verification-loop` (orchestrator)
 
