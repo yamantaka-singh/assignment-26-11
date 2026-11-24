@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.void/
+.wrangler/
+.env*
+!.env.example
+.vercel/
+coverage/
+.DS_Store
