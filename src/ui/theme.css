@@ -1,0 +1,295 @@
+@import url("https://fonts.googleapis.com/css2?family=Lora:wght@500;700&display=swap");
+
+/*
+ * Sharad Utsav brand tokens + accessible base styles.
+ * Import once from a page:  import "../src/ui/theme.css";
+ *
+ * WCAG 2.2 contrast (computed with relative luminance; AA = 4.5 text, 3.0 UI/large):
+ *   white       on #2C2C2C dark ........ 13.97   body text on dark
+ *   white       on glass card ......... 11.90   (card fill = white 5% over dark = #373737)
+ *   muted (white 72%) on dark/card ..... 8.01 / 6.83   hints, secondary text
+ *   #C99B24 primary on dark ............ 5.45   gold text/links OK on dark
+ *   #D1AC3E brightGold on dark ......... 6.44   focus ring + hover (ring needs 3.0)
+ *   #BC9226 gold on dark ............... 4.84   borders/icons
+ *   #FFFFFF on #C99B24 button .......... 2.56   FAIL -> not used
+ *   #291900 on #C99B24 button .......... 6.65   CHOSEN primary button label
+ *   #291900 on #D1AC3E hover ........... 7.85
+ *   #EF1F1F error on dark .............. 3.25   FAIL for small text -> on dark use --error-on-dark
+ *   #FF8A80 error tint on dark ......... 6.12   CHOSEN (same hue family, lighter)
+ *   #28A736 success on dark ............ 4.44   FAIL (just) -> on dark use --success-on-dark
+ *   #5FD36E success tint on dark ....... 7.33   CHOSEN
+ *   #291900 heading on cream ........... 15.50
+ *   #645743 primary-text on cream ...... 6.40
+ *   #EF1F1F error on cream ............. 3.91   FAIL -> on cream use --error-on-light #B3120F = 6.35
+ *   #28A736 success on cream ........... 2.87   FAIL -> on cream use --success-on-light #1B7A27 = 4.95
+ *   input border white 55% on dark ..... 5.34   (UI components need 3.0; brand 20% border is 1.90, so it is
+ *                                                used only for decorative card edges, never for form controls)
+ *   focus ring #D1AC3E on dark 6.44; on cream 1.97 FAIL -> ring flips to #291900 (15.50) inside cream panels.
+ * Brand #EF1F1F / #28A736 remain as accent borders + icons (non-text, 3.0 needed; 3.25 on dark passes for error,
+ * success border is paired with its readable text tint).
+ */
+
+:root {
+  /* brand, verbatim */
+  --primary-dark: #2c2c2c;
+  --primary: #c99b24;
+  --gold: #bc9226;
+  --bright-gold: #d1ac3e;
+  --cream: #fdf3e4;
+  --heading: #291900;
+  --primary-text: #645743;
+  --white: #ffffff;
+  --success: #28a736;
+  --error: #ef1f1f;
+
+  /* accessible derivations (see table above) */
+  --on-primary: #291900;
+  --muted: rgb(255 255 255 / 0.72);
+  --error-on-dark: #ff8a80;
+  --success-on-dark: #5fd36e;
+  --warning-on-dark: #f0c25a;
+  --error-on-light: #b3120f;
+  --success-on-light: #1b7a27;
+  --control-border: rgb(255 255 255 / 0.55);
+
+  --card-fill: rgb(255 255 255 / 0.05);
+  --card-border: rgb(255 255 255 / 0.2);
+
+  --font-serif: "Lora", Georgia, "Times New Roman", serif;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --gutter: 16px;
+  --radius: 12px;
+  --target: 48px; /* >= 44px touch target */
+  --ring: var(--bright-gold);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: var(--primary-dark);
+  color: var(--white);
+  font: 1rem/1.55 var(--font-sans);
+  overflow-wrap: anywhere;
+}
+
+h1, h2, h3, legend.legend-heading {
+  font-family: var(--font-serif);
+  line-height: 1.2;
+  margin: 0 0 0.5em;
+}
+h1 { font-size: clamp(1.75rem, 6vw, 2.5rem); color: var(--bright-gold); }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.2rem; }
+
+p { margin: 0 0 1em; }
+a { color: var(--bright-gold); text-underline-offset: 3px; }
+a:hover { color: var(--white); }
+
+.page {
+  width: 100%;
+  max-width: 720px;
+  margin-inline: auto;
+  padding: 24px var(--gutter) 96px;
+}
+
+.stack > * + * { margin-top: 16px; }
+.muted { color: var(--muted); }
+
+/* ---------- accessibility utilities ---------- */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+.card--cream { --ring: var(--heading); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- cards ---------- */
+.card {
+  border-radius: var(--radius);
+  padding: 20px var(--gutter);
+  background: var(--card-fill);
+  border: 1px solid var(--card-border);
+}
+.card > h2, .card > h3 { margin-top: 0; }
+.card--cream {
+  background: var(--cream);
+  border-color: var(--gold);
+  color: var(--primary-text);
+  --muted: var(--primary-text);
+}
+.card--cream h2, .card--cream h3 { color: var(--heading); }
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--target);
+  min-width: var(--target);
+  padding: 0 24px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  font: 600 1rem/1 var(--font-sans);
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.btn--primary { background: var(--primary); color: var(--on-primary); }
+.btn--primary:hover:not(:disabled) { background: var(--bright-gold); }
+.btn--secondary { background: transparent; color: var(--bright-gold); border-color: var(--gold); }
+.btn--secondary:hover:not(:disabled) { border-color: var(--bright-gold); background: rgb(255 255 255 / 0.08); }
+.btn--ghost { background: transparent; color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
+.btn--ghost:hover:not(:disabled) { color: var(--bright-gold); }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn[aria-busy="true"]::before {
+  content: "";
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.card--cream .btn--secondary { color: var(--heading); border-color: var(--heading); }
+.card--cream .btn--ghost { color: var(--heading); }
+
+/* ---------- forms ---------- */
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field__label { font-weight: 600; }
+.field__hint { color: var(--muted); font-size: 0.9rem; }
+.field__error { color: var(--error-on-dark); font-size: 0.95rem; font-weight: 600; }
+.card--cream .field__error { color: var(--error-on-light); }
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: var(--target);
+  padding: 10px 12px;
+  font: inherit; /* 16px+ prevents iOS zoom on focus */
+  color: var(--white);
+  background: rgb(255 255 255 / 0.08);
+  border: 2px solid var(--control-border);
+  border-radius: 8px;
+}
+.field select { appearance: auto; }
+.field select option { color: #000; background: #fff; }
+.field input::placeholder { color: var(--muted); }
+.field input[aria-invalid="true"],
+.field select[aria-invalid="true"] { border-color: var(--error-on-dark); }
+.card--cream .field input,
+.card--cream .field select { color: var(--heading); background: #fff; border-color: var(--primary-text); }
+.card--cream .field input[aria-invalid="true"] { border-color: var(--error-on-light); }
+.card--cream .field__hint { color: var(--primary-text); }
+
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+legend { font-weight: 600; padding: 0; margin-bottom: 8px; }
+
+/* checkbox / radio rows: whole row is the target */
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: var(--target);
+  padding: 10px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.choice + .choice { margin-top: 8px; }
+.choice input[type="checkbox"],
+.choice input[type="radio"] {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  accent-color: var(--primary);
+}
+.choice:has(input:checked) { border-color: var(--primary); background: rgb(201 155 36 / 0.12); }
+.choice:has(input:disabled) { opacity: 0.75; cursor: not-allowed; }
+.choice__reason { display: block; color: var(--muted); font-size: 0.9rem; }
+.card--cream .choice { border-color: var(--primary-text); }
+
+/* ---------- notices ---------- */
+.notice {
+  padding: 12px var(--gutter);
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  border-inline-start-width: 6px;
+  background: var(--card-fill);
+}
+.notice__title { display: block; font-weight: 700; }
+.notice--info { border-color: var(--bright-gold); }
+.notice--success { border-color: var(--success); }
+.notice--success .notice__title { color: var(--success-on-dark); }
+.notice--error { border-color: var(--error); }
+.notice--error .notice__title { color: var(--error-on-dark); }
+.notice--warning { border-color: var(--warning-on-dark); }
+.notice--warning .notice__title { color: var(--warning-on-dark); }
+
+/* ---------- stepper ---------- */
+.stepper ol { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; }
+.stepper li {
+  flex: 1 1 0;
+  min-width: 0;
+  padding-top: 8px;
+  border-top: 4px solid var(--card-border);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.stepper li[data-state="done"] { border-top-color: var(--gold); }
+.stepper li[aria-current="step"] { border-top-color: var(--primary); color: var(--white); font-weight: 700; }
+@media (min-width: 480px) { .stepper li { font-size: 0.95rem; } }
+
+/* ---------- sticky summary bar (mobile) ---------- */
+.summary-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-inline: calc(var(--gutter) * -1);
+  padding: 12px var(--gutter) calc(12px + env(safe-area-inset-bottom));
+  background: var(--primary-dark);
+  border-top: 1px solid var(--card-border);
+}
+.summary-bar__total { font: 700 1.25rem var(--font-serif); }
+
+.line { display: flex; justify-content: space-between; gap: 16px; }
+.line + .line { margin-top: 6px; }
